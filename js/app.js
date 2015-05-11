@@ -29,7 +29,7 @@ let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="players" path="/players" handler={PlayersHandler}/>
     <Route name="games" path="/games" handler={GamesHandler} />
-    <Route path="/game/:id" handler={GameView} />
+    <Route name="game" path="/game/:id" handler={GameView} />
   </Route>
 );
 
