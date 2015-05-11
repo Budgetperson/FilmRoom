@@ -46,15 +46,6 @@ class PlayerStore {
     });
     return false;
   }
- 
-  // updateTodo({ id, text }) {
-  //   const todos = this.todos;
- 
-  //   todos[id] = todos[id] || {};
-  //   todos[id].text = text;
- 
-  //   this.setState({ todos });
-  // }
 }
  
 export default alt.createStore(PlayerStore, 'PlayerStore');
