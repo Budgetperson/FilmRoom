@@ -1,12 +1,12 @@
 import alt from '../alt';
 import db from './db';
-// import TodoActions from '../TodoActions'
+import GameActions from '../actions/GameActions'
  
 class GameStore {
   constructor() {
-    // this.bindListeners({
-    //   updateTodo: TodoActions.updateTodo
-    // });
+    this.bindListeners({
+      setCurrentPossession: GameActions.setCurrentPossession
+    });
     this.games = [];
     var _this = this;
     db.find({type: 'game'}, function(err, docs) {
@@ -20,6 +20,26 @@ class GameStore {
         _this.games = docs;
       }
     });
+  }
+
+  setCurrentPossession({game_id, possession_id}) {
+    var _this = this;
+    db.update({_id: game_id}, { $set: {current_possession: possession_id} }, {}, function() {
+      _this.update();
+    });
+    return false;
+  }
+
+  update() {
+    // lol what is performance anyways
+    var _this = this;
+    db.find({type: 'game'}, function(err, docs) {
+      _this.games = docs;
+      console.log("new docs bruh");
+      console.log(docs);
+      _this.emitChange();
+    });
+    return false;
   }
 
   gameWithId(id) {

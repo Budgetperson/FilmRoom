@@ -30,7 +30,7 @@ class PlayerStore {
   }
 
   deletePlayer(id) {
-    console.log("here");
+    //console.log("here");
     var _this = this;
     db.remove({ _id: id }, {}, function(err, numRemoved) {
       _this.updatePlayers();

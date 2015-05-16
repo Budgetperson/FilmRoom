@@ -16,7 +16,7 @@ let Players = React.createClass({
   },
 
   onChange(state) {
-    console.log(state);
+    //console.log(state);
     this.setState(state);
   },
 

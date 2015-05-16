@@ -1,28 +1,48 @@
 import alt from '../alt';
 import db from './db';
 import PlayerActions from '../actions/PlayerActions';
- 
-class PosessionStore {
+import PossessionActions from '../actions/PossessionActions';
+
+class PossessionStore {
   constructor() {
-    // this.bindListeners({
-    //   deletePlayer: PlayerActions.deletePlayer
-    // });
-    this.possessions = [];
-    var _this = this;
-    db.find({type: 'possession'}, function(err, docs) {
-      if (docs.length === 0) {
-      } else {
-        _this.posessions = docs;
-      }
+    this.bindListeners({
+      addPossession: PossessionActions.addPossession
     });
+    this.possessions = {};
+    var _this = this;
+    // todo bug fixme: bootstrap the possessions
+    // db.find({type: 'possession'}, function(err, docs) {
+    //   if (docs.length === 0) {
+    //   } else {
+    //     _this.possessions = docs;
+    //   }
+    // });
   }
 
-  static possessionsFromGame(game_id) {
-    db.find({type: 'possession', game_id: game_id}, function(err, docs) {
-      return docs;
+  addPossession({game_id, existing_possessions}) {
+    var new_possession = {
+      type: 'possession',
+      game_id: game_id,
+      number: existing_possessions + 1
+    };
+
+    var _this = this;
+    db.insert(new_possession, function(err, new_doc) {
+      _this.updatePossessionsForGame(game_id);
     });
+    return false;
+  }
+
+  updatePossessionsForGame(game_id) {
+    var _this = this;
+    // todo sort first by time start, then by possession #
+    db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
+      _this.possessions[game_id] = docs;
+      _this.emitChange();
+    });
+    return false;
   }
 
 }
  
-export default alt.createStore(PosessionStore, 'PossessionStore');
+export default alt.createStore(PossessionStore, 'PossessionStore');
