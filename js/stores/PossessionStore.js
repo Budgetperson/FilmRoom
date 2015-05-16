@@ -6,7 +6,8 @@ import PossessionActions from '../actions/PossessionActions';
 class PossessionStore {
   constructor() {
     this.bindListeners({
-      addPossession: PossessionActions.addPossession
+      addPossession: PossessionActions.addPossession,
+      updatePossession: PossessionActions.updatePossession
     });
     this.possessions = {};
     var _this = this;
@@ -23,7 +24,8 @@ class PossessionStore {
     var new_possession = {
       type: 'possession',
       game_id: game_id,
-      number: existing_possessions + 1
+      number: existing_possessions + 1,
+      lineup: ["", "", "", "", ""]
     };
 
     var _this = this;
@@ -33,10 +35,19 @@ class PossessionStore {
     return false;
   }
 
+  updatePossession({possession, update}) {
+    var _this = this;
+    db.update({ _id: possession._id }, update, {}, function() {
+      _this.updatePossessionsForGame(possession.game_id);
+    });
+    return false;
+  }
+
   updatePossessionsForGame(game_id) {
     var _this = this;
     // todo sort first by time start, then by possession #
     db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
+      console.log(docs);
       _this.possessions[game_id] = docs;
       _this.emitChange();
     });

@@ -30,15 +30,10 @@ let Game = React.createClass({
 
   onPossessionChange(state) {
     var id = this.props.params.id;
-    this.setState({possessions: PossessionStore.getState().possessions[id] || [] }, function() {
-      console.log("fuck");
-      console.log(this.state);
-    });
+    this.setState({possessions: PossessionStore.getState().possessions[id] || [] });
   },
 
   onChange(state) {
-    console.log("trololol");
-    console.log(this.state);
     var id = this.props.params.id;
     this.setState({game_info: state.games.find(game => game._id == id) });
   },

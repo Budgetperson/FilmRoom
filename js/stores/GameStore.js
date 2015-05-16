@@ -35,8 +35,6 @@ class GameStore {
     var _this = this;
     db.find({type: 'game'}, function(err, docs) {
       _this.games = docs;
-      console.log("new docs bruh");
-      console.log(docs);
       _this.emitChange();
     });
     return false;
