@@ -6,6 +6,7 @@ import PlayersHandler from './views/Players.js';
 import GamesHandler from './views/Games.js';
 import GameView from './views/Game.js';
 import alt from './alt.js';
+import db from './stores/db.js'
 
 let App = React.createClass({
   render() {
@@ -33,6 +34,8 @@ let routes = (
   </Route>
 );
 
-Router.run(routes, function (Handler) {  
-  React.render(<Handler/>, document.body);
+db.loadDatabase(function(err) {
+  Router.run(routes, function (Handler) {  
+    React.render(<Handler/>, document.body);
+  });
 });

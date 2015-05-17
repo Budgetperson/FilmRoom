@@ -11,13 +11,15 @@ class PossessionStore {
     });
     this.possessions = {};
     var _this = this;
-    // todo bug fixme: bootstrap the possessions
-    // db.find({type: 'possession'}, function(err, docs) {
-    //   if (docs.length === 0) {
-    //   } else {
-    //     _this.possessions = docs;
-    //   }
-    // });
+    //todo bug fixme: bootstrap the possessions
+    db.find({type: 'possession'}).sort({game_id: 1, number: 1}).exec(function(err, docs) {
+      if (docs.length === 0) {
+      } else {
+        docs.forEach(function(pos) {
+          _this.possessions[pos.game_id] = docs;
+        });
+      }
+    });
   }
 
   addPossession({game_id, existing_possessions}) {

@@ -35,7 +35,13 @@ let Game = React.createClass({
 
   onChange(state) {
     var id = this.props.params.id;
-    this.setState({game_info: state.games.find(game => game._id == id) });
+    this.setState({game_info: state.games.find(game => game._id == id) }, function() {
+      var current_possession_id = this.state.game_info.current_possession;
+      var current_possession = this.state.possessions.find(pos => pos._id == current_possession_id);
+      var start_time = current_possession.start_time;
+      console.log(start_time);
+      if(start_time) {console.log("fuck"); window.player.seekTo(start_time, true); }
+    });
   },
 
   addPossession(ev) {
@@ -77,7 +83,7 @@ let Game = React.createClass({
           <h3>Possessions</h3>
           <ul id="possession_list">
             {this.state.possessions.map(function(pos) {
-              return (<li onClick={_this.setCurrentPossession.bind(_this, pos._id)} key={pos._id}>Possession {pos.number}</li>)
+              return (<li onClick={_this.setCurrentPossession.bind(_this, pos._id)} key={pos._id}>Possession {pos.number}: {pos.start_time ? pos.start_time : ''}</li>)
             })}
             <li><button onClick={_this.addPossession} className="pure-button button-add">Add Possession</button></li>
           </ul>

@@ -28,8 +28,8 @@ let PlayerSelector = React.createClass({
     //console.log(this.state.players);
     var _this = this;
     return (
-      <select defaultValue={this.props.selected} onChange={this.playerChange}>
-          <option value="" disabled>Player:</option>
+      <select value={_this.props.selected} onChange={this.playerChange}>
+          <option value="">Player:</option>
           {this.state.players.map(function(player) {
             return (
               <option key={player._id} value={player._id}>

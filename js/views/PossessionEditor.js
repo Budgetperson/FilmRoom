@@ -14,6 +14,13 @@ let PossessionEditor = React.createClass({
     PossessionActions.updatePossession(pos, update);
   },
 
+  setEndTime() {
+    var pos = this.props.possession;
+    var current_time = window.player.getCurrentTime();
+    var update = { $set: { end_time: current_time } };
+    PossessionActions.updatePossession(pos, update);
+  },
+
   lineupChange(position, player_id) {
     var pos = this.props.possession;
     var field_to_update = "lineup." + (position - 1);
@@ -85,7 +92,6 @@ let PossessionEditor = React.createClass({
   render() {
     var pos = this.props.possession;
     var _this = this;
-
     return (
       <div>
         <section id="start_time">
@@ -116,7 +122,13 @@ let PossessionEditor = React.createClass({
           <span>Shot By:</span><PlayerSelector selected={pos.shot_by} onChange={this.setShotBy} />
           <span>Assist By:</span><PlayerSelector selected={pos.assist} onChange={this.setAssist} />
         </section>
+
+        <section id="end_time">
+          <button onClick={_this.setEndTime} className="pure-button button-add">Set End Time</button>
+          <span>{pos.end_time ? pos.end_time : "Not Set"}</span>
+        </section>
       </div>
+
     );
   }
 });
