@@ -69,23 +69,6 @@ let Game = React.createClass({
       }
     };
 
-    var player_select = (
-      <select>
-        <option value="Yash Aggarwal">Yash</option>
-        <option value="Quinn McNamara">Quinn</option>
-        <option value="Nimish Kumar">Nishan</option>
-        <option value="Nishan Gajjar">Nimish</option>
-        <option value="Siddharth Kumar">Siddharth</option>
-        <option value="Tariq Zahroof">Tariq</option>
-        <option value="Brian Hoang">Brian</option>
-        <option value="Darshil Choksi">Darshil</option>
-      </select>
-    );
-
-    var player_selects = [];
-    for(var i = 0; i < 5; ++i) {
-      player_selects.push(<li>{player_select}</li>);
-    }
     var _this = this;
     return (
       <div className="pure-g">
@@ -101,7 +84,6 @@ let Game = React.createClass({
         </div>
 
         <div className="pure-u-1-2">
-
           {possession_view}
         </div>
       </div>

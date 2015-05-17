@@ -21,16 +21,26 @@ class PossessionStore {
   }
 
   addPossession({game_id, existing_possessions}) {
-    var new_possession = {
-      type: 'possession',
-      game_id: game_id,
-      number: existing_possessions + 1,
-      lineup: ["", "", "", "", ""]
-    };
-
+    // todo prefill lineup from previous possession
     var _this = this;
-    db.insert(new_possession, function(err, new_doc) {
-      _this.updatePossessionsForGame(game_id);
+    db.findOne({game_id: game_id, type: 'possession', number: existing_possessions}, function(err, doc) {
+      var lineup = ["", "", "", "", ""];
+      if(doc !== null) {
+        lineup = doc.lineup;
+      }
+      var new_possession = {
+        type: 'possession',
+        game_id: game_id,
+        number: existing_possessions + 1,
+        lineup: lineup,
+        ftm: 0,
+        fta: 0,
+        shot_by: "",
+        assist: ""
+      };
+      db.insert(new_possession, function(err, new_doc) {
+        _this.updatePossessionsForGame(game_id);
+      });
     });
     return false;
   }
