@@ -106,7 +106,13 @@ class PossessionStore {
         }
       });
 
-      callback(_.values(result));
+      result = _.values(result);
+      result.forEach(function(player, index, array) {
+        array[index].points = (player.fgm * 2) + (player.threepm) + player.ftm;
+        array[index].efg = (player.fgm + 0.5 * player.threepm) / player.fga;
+      });
+
+      callback(result);
     });
     return false;
   }
