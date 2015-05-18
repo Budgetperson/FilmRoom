@@ -2,6 +2,8 @@ import alt from '../alt';
 import db from './db';
 import PlayerActions from '../actions/PlayerActions';
 import PossessionActions from '../actions/PossessionActions';
+import PlayerStore from './PlayerStore';
+var _ = require("lodash");
 
 class PossessionStore {
   constructor() {
@@ -62,6 +64,49 @@ class PossessionStore {
       console.log(docs);
       _this.possessions[game_id] = docs;
       _this.emitChange();
+    });
+    return false;
+  }
+
+  // start_time, end_time, lineup, turnover, shot_attempt_value, shot_made,
+  // ftm, fta, "shot_by", assist
+  // in box: FG make-attmepts, 3PT make-atempts, efg%, FTA-FTM, AST, TO, PTS
+  static getBoxScoreInfo(game_id, callback) {
+    db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
+      var result = PlayerStore.getState().players;
+      var box_score_info = {
+        fgm: 0,
+        fga: 0,
+        threepa: 0,
+        threepm: 0,
+        efg: 0,
+        fta: 0,
+        ftm: 0,
+        assists: 0,
+        turnovers: 0,
+        points: 0
+      };
+      result.map(function(possession) {
+        return _.extend(possession, box_score_info);
+      });
+      result = _.indexBy(result, '_id');
+      docs.forEach(function(possession) {
+        if(possession.turnover) {
+          var playerCausingTurnover = possession.shot_by;
+          result[playerCausingTurnover]["turnovers"]++;
+        } else {
+          var playerShot = possession.shot_by;
+          result[playerShot]["fga"]++;
+          if(possession.shot_made) result[playerShot]["fgm"]++;
+          if(possession.shot_attempt_value === 3) result[playerShot]["threepa"]++;
+          if(possession.shot_made && possession.shot_attempt_value === 3) result[playerShot]["threepm"]++;
+          result[playerShot]["fta"] += possession.fta;
+          result[playerShot]["ftm"] += possession.ftm;
+          if(possession.assist !== "") result[possession.assist]["assists"]++;
+        }
+      });
+
+      callback(_.values(result));
     });
     return false;
   }

@@ -5,8 +5,9 @@ import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import PlayersHandler from './views/Players.js';
 import GamesHandler from './views/Games.js';
 import GameView from './views/Game.js';
+import BoxScoreView from './views/BoxScore.js';
 import alt from './alt.js';
-import db from './stores/db.js'
+import db from './stores/db.js';
 
 let App = React.createClass({
   render() {
@@ -31,6 +32,7 @@ let routes = (
     <Route name="players" path="/players" handler={PlayersHandler}/>
     <Route name="games" path="/games" handler={GamesHandler} />
     <Route name="game" path="/game/:id" handler={GameView} />
+    <Route name="box" path="/box/:id" handler={BoxScoreView} />
   </Route>
 );
 

@@ -1,11 +1,13 @@
-var webpack = require('webpack');  
-module.exports = {  
+var webpack = require('webpack');
+var path = require('path');
+module.exports = {
+    context: __dirname,
     entry: [
       'webpack/hot/only-dev-server',
       "./js/app.js"
     ],
     output: {
-        path: __dirname + '/build',
+        path: path.resolve(__dirname, '/build'),
         filename: "bundle.js"
     },
     module: {
