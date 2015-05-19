@@ -13,14 +13,11 @@ class PossessionStore {
     });
     this.possessions = {};
     var _this = this;
-    //todo bug fixme: bootstrap the possessions
-    db.find({type: 'possession'}).sort({game_id: 1, number: 1}).exec(function(err, docs) {
-      if (docs.length === 0) {
-      } else {
-        docs.forEach(function(pos) {
-          _this.possessions[pos.game_id] = docs;
-        });
-      }
+
+    db.find({type: 'game'}, function(err, docs) {
+      docs.forEach(function(game) {
+        _this.updatePossessionsForGame(game._id);
+      });
     });
   }
 
@@ -61,7 +58,6 @@ class PossessionStore {
     var _this = this;
     // todo sort first by time start, then by possession #
     db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
-      console.log(docs);
       _this.possessions[game_id] = docs;
       _this.emitChange();
     });

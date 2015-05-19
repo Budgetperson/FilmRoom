@@ -12,10 +12,18 @@ let Game = React.createClass({
     var id = this.props.params.id;
     var game_properties = GameStore.getState().games.find(game => game._id == id);
     var possessions = PossessionStore.getState().possessions[id] || [];
-    return {
-      game_info: game_properties,
-      possessions: possessions
-    };
+    if(game_properties === undefined || possessions === undefined) {
+      return {
+        game_info: {},
+        possessions: []
+      };
+    } else {
+      return {
+        game_info: game_properties,
+        possessions: possessions
+      };
+    }
+
   },
 
   componentDidMount() {
@@ -38,9 +46,10 @@ let Game = React.createClass({
     this.setState({game_info: state.games.find(game => game._id == id) }, function() {
       var current_possession_id = this.state.game_info.current_possession;
       var current_possession = this.state.possessions.find(pos => pos._id == current_possession_id);
-      var start_time = current_possession.start_time;
-      console.log(start_time);
-      if(start_time) {console.log("fuck"); window.player.seekTo(start_time, true); }
+      if(current_possession !== undefined) {
+        var start_time = current_possession.start_time;
+        if(start_time) { window.player.seekTo(start_time, true); }
+      }
     });
   },
 
@@ -57,9 +66,10 @@ let Game = React.createClass({
 
   render() {
     var current_possession_id = this.state.game_info.current_possession;
+    var current_possession = this.state.possessions.find(pos => pos._id == current_possession_id);
+
     var possession_view;
-    if(current_possession_id !== undefined) {
-      var current_possession = this.state.possessions.find(pos => pos._id == current_possession_id);
+    if(current_possession !== undefined) {
       possession_view = <PossessionEditor possession={current_possession} />;
     } else {
       possession_view = <h3>No Posession Selected</h3>;

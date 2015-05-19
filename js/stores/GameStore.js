@@ -15,9 +15,11 @@ class GameStore {
                     {type: 'game', opponent: 'The Tropics', points_scored: 40, opponent_points_scored: 70},
                     {type: 'game', opponent: 'Delta Chi', points_scored: 20, opponent_points_scored: 40}], function(err, newDocs) {
           _this.games = newDocs;
+          _this.emitChange();
         });
       } else {
         _this.games = docs;
+        _this.emitChange();
       }
     });
   }

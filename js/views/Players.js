@@ -16,17 +16,14 @@ let Players = React.createClass({
   },
 
   onChange(state) {
-    //console.log(state);
     this.setState(state);
   },
 
   deletePlayer(id, ev) {
-    console.log(id);
     PlayerActions.deletePlayer(id);
   },
 
   render() {
-    //console.log(this.state.players);
     var _this = this;
     return (
       <table className="pure-table">

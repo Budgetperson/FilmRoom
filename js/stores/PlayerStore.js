@@ -22,9 +22,11 @@ class PlayerStore {
                     {type: 'player', name: 'Nishan Gajjar'},
                     {type: 'player', name: 'Darshil Choksi'}], function(err, newDocs) {
           _this.players = newDocs;
+          _this.emitChange();
         });
       } else {
         _this.players = docs;
+        _this.emitChange();
       }
     });
   }
