@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
     context: __dirname,
     entry: [
-      'webpack/hot/only-dev-server',
+      //'webpack/hot/only-dev-server',
       "./js/app.js"
     ],
     output: {

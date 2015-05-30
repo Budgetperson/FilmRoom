@@ -1,0 +1,6 @@
+{
+  "name": "film-room",
+  "root": "./build",
+  "clean_urls": false,
+  "exclude": ["./actions/*", "./stores/*", "./alt.js", "./app.js", "./node_modules/*"]
+}

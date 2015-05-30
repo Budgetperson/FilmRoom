@@ -53,6 +53,7 @@ let BoxScore = React.createClass({
       }, 0);
     });
     totals.efg = (totals.fgm + 0.5 * totals.threepm) / totals.fga;
+    totals.ts = (totals.points) / (2 * (totals.fga + 0.5 * totals.fta));
 
     return (
       <table id="box" className="pure-table">
@@ -63,6 +64,7 @@ let BoxScore = React.createClass({
             <th>3PT</th>
             <th>FT</th>
             <th>EFG%</th>
+            <th>TS%</th>
             <th>AST</th>
             <th>TO</th>
             <th>PTS</th>
@@ -77,6 +79,7 @@ let BoxScore = React.createClass({
                 <td>{player.threepm}-{player.threepa}</td>
                 <td>{player.ftm}-{player.fta}</td>
                 <td>{(player.efg * 100).toFixed(2)}%</td>
+                <td>{(player.ts * 100).toFixed(2)}%</td>
                 <td>{player.assists}</td>
                 <td>{player.turnovers}</td>
                 <td>{player.points}</td>
@@ -89,6 +92,7 @@ let BoxScore = React.createClass({
             <td>{totals.threepm}-{totals.threepa}</td>
             <td>{totals.ftm}-{totals.fta}</td>
             <td>{(totals.efg * 100).toFixed(2)}%</td>
+            <td>{(totals.ts * 100).toFixed(2)}%</td>
             <td>{totals.assists}</td>
             <td>{totals.turnovers}</td>
             <td>{totals.points}</td>

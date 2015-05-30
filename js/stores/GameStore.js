@@ -11,9 +11,9 @@ class GameStore {
     var _this = this;
     db.find({type: 'game'}, function(err, docs) {
       if (docs.length === 0) {
-        db.insert([ {type: 'game', opponent: 'AT Squad', points_scored: 10, opponent_points_scored: 20},
-                    {type: 'game', opponent: 'The Tropics', points_scored: 40, opponent_points_scored: 70},
-                    {type: 'game', opponent: 'Delta Chi', points_scored: 20, opponent_points_scored: 40}], function(err, newDocs) {
+        db.insert([ {type: 'game', opponent: 'Rack City', points_scored: 10, opponent_points_scored: 20, playlist: 'PLh8e-_BCEBVm8R5csC3z5qsmSsO83B5fC'},
+                    {type: 'game', opponent: 'The Tropics', points_scored: 40, opponent_points_scored: 70, playlist: 'PLh8e-_BCEBVlZc6ANlajflKB4rhxt6dMT'},
+                    {type: 'game', opponent: 'Delta Chi', points_scored: 20, opponent_points_scored: 40, playlist: 'PLh8e-_BCEBVnmqkZw6gsSgVMvySPezV4C'}], function(err, newDocs) {
           _this.games = newDocs;
           _this.emitChange();
         });

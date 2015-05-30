@@ -81,19 +81,26 @@ let Game = React.createClass({
       playerVars: {
         enablejsapi: 1,
         listType: 'playlist',
-        list: 'PLh8e-_BCEBVlZc6ANlajflKB4rhxt6dMT'
+        list: this.state.game_info.playlist
       }
     };
+
+    var youtube_element;
+    if(this.state.game_info.playlist !== undefined) {
+      youtube_element = <YouTube id="player" opts={opts} />;
+    } else {
+      youtube_element = <h2></h2>;
+    }
 
     var _this = this;
     return (
       <div className="pure-g">
         <div className="pure-u-1-2">
-          <YouTube id="player" opts={opts} />
+          {youtube_element}
           <h3>Possessions</h3>
           <ul id="possession_list">
             {this.state.possessions.map(function(pos) {
-              return (<li onClick={_this.setCurrentPossession.bind(_this, pos._id)} key={pos._id}>Possession {pos.number}: {pos.start_time ? pos.start_time : ''}</li>)
+              return (<li onClick={_this.setCurrentPossession.bind(_this, pos._id)} key={pos._id}>Possession {pos.number}: {pos.start_time ? (+pos.start_time).toFixed(1) : ''}, {pos.result ? pos.result : ''}</li>)
             })}
             <li><button onClick={_this.addPossession} className="pure-button button-add">Add Possession</button></li>
           </ul>

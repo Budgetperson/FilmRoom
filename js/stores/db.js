@@ -1,3 +1,3 @@
 var DataStore = require('nedb');
-window.test = require('nedb');
-export default new DataStore({filename: 'yash'});
+window.my_store = new DataStore({filename: 'yash'});
+export default window.my_store;

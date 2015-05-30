@@ -96,9 +96,15 @@ class PossessionStore {
           if(possession.shot_made) result[playerShot]["fgm"]++;
           if(possession.shot_attempt_value === 3) result[playerShot]["threepa"]++;
           if(possession.shot_made && possession.shot_attempt_value === 3) result[playerShot]["threepm"]++;
-          result[playerShot]["fta"] += possession.fta;
-          result[playerShot]["ftm"] += possession.ftm;
+          result[playerShot]["fta"] += Number(possession.fta);
+          if(possession.fta > 0 && !possession.shot_made) {
+            result[playerShot]["fga"]--;
+            if(possession.shot_attempt_value == 3) result[playerShot]["threepa"]--;
+          }
+          result[playerShot]["ftm"] = Number(result[playerShot]["ftm"]) + (Number(possession.ftm));
           if(possession.assist !== "") result[possession.assist]["assists"]++;
+          }
+
         }
       });
 
@@ -106,6 +112,8 @@ class PossessionStore {
       result.forEach(function(player, index, array) {
         array[index].points = (player.fgm * 2) + (player.threepm) + player.ftm;
         array[index].efg = (player.fgm + 0.5 * player.threepm) / player.fga;
+        // for true shooting %, assume no and1s right now
+        array[index].ts = (player.points) / (2 * (player.fga + 0.5 * player.fta));
       });
 
       callback(result);

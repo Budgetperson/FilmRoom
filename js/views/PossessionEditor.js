@@ -64,6 +64,7 @@ let PossessionEditor = React.createClass({
   },
 
   setFreeThrowsAttempted(event) {
+    console.log(event.target.value);
     var pos = this.props.possession;
     var fta = event.target.value;
     var update = { $set: {
@@ -114,8 +115,8 @@ let PossessionEditor = React.createClass({
         </ul>
 
         <section id="free_throws">
-          <span>FTM:</span><input defaultValue={pos.ftm || 0} onChange={this.setFreeThrowsMade} type="number" name="ftm" min="0" max="3" />
-          <span>FTA:</span><input defaultValue={pos.fta || 0} onChange={this.setFreeThrowsAttempted} type="number" name="ftm" min="0" max="3" />
+          <span>FTM:</span><input value={pos.ftm} onChange={this.setFreeThrowsMade} type="number" name="ftm" min="0" max="3" />
+          <span>FTA:</span><input value={pos.fta} onChange={this.setFreeThrowsAttempted} type="number" name="fta" min="0" max="3" />
         </section>
 
         <section id="player_credit">
