@@ -16,6 +16,11 @@ let BoxScore = React.createClass({
         box_info: data
       });
     });
+    PossessionStore.getStatistics(this.props.params.id, function(stats) {
+      _this.setState({
+        stats: stats
+      });
+    });
   },
 
   onChange() {
@@ -25,6 +30,11 @@ let BoxScore = React.createClass({
         box_info: data
       });
     });
+    PossessionStore.getStatistics(this.props.params.id, function(stats) {
+      _this.setState({
+        stats: stats
+      });
+    });
   },
 
   componentWillUnmount() {
@@ -32,7 +42,6 @@ let BoxScore = React.createClass({
   },
 
   render() {
-    //console.log(this.state.players);
     var _this = this;
     var totals = {
       fgm: 0,
@@ -44,7 +53,8 @@ let BoxScore = React.createClass({
       ftm: 0,
       assists: 0,
       turnovers: 0,
-      points: 0
+      points: 0,
+      rebounds: 0,
     };
 
     _.keys(totals).forEach(function(stat) {
@@ -56,49 +66,65 @@ let BoxScore = React.createClass({
     totals.ts = (totals.points) / (2 * (totals.fga + 0.5 * totals.fta));
 
     return (
-      <table id="box" className="pure-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>FG</th>
-            <th>3PT</th>
-            <th>FT</th>
-            <th>EFG%</th>
-            <th>TS%</th>
-            <th>AST</th>
-            <th>TO</th>
-            <th>PTS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.box_info.map(function(player) {
-            return (
-              <tr key={player._id}>
-                <td>{player.name}</td>
-                <td>{player.fgm}-{player.fga}</td>
-                <td>{player.threepm}-{player.threepa}</td>
-                <td>{player.ftm}-{player.fta}</td>
-                <td>{(player.efg * 100).toFixed(2)}%</td>
-                <td>{(player.ts * 100).toFixed(2)}%</td>
-                <td>{player.assists}</td>
-                <td>{player.turnovers}</td>
-                <td>{player.points}</td>
-              </tr>
-            )
+      <div>
+        <table id="box" className="pure-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>MIN</th>
+              <th>FG</th>
+              <th>3PT</th>
+              <th>FT</th>
+              <th>EFG%</th>
+              <th>TS%</th>
+              <th>AST</th>
+              <th>REB</th>
+              <th>TO</th>
+              <th>+/-</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.box_info.map(function(player) {
+              return (
+                <tr key={player._id}>
+                  <td>{player.name}</td>
+                  <td>{player.minutes}</td>
+                  <td>{player.fgm}-{player.fga}</td>
+                  <td>{player.threepm}-{player.threepa}</td>
+                  <td>{player.ftm}-{player.fta}</td>
+                  <td>{(player.efg * 100).toFixed(2)}%</td>
+                  <td>{(player.ts * 100).toFixed(2)}%</td>
+                  <td>{player.assists}</td>
+                  <td>{player.rebounds}</td>
+                  <td>{player.turnovers}</td>
+                  <td>{player.plus_minus}</td>
+                  <td>{player.points}</td>
+                </tr>
+              )
+            })}
+            <tr id="last_box">
+              <td>Totals:</td>
+              <td>--</td>
+              <td>{totals.fgm}-{totals.fga}</td>
+              <td>{totals.threepm}-{totals.threepa}</td>
+              <td>{totals.ftm}-{totals.fta}</td>
+              <td>{(totals.efg * 100).toFixed(2)}%</td>
+              <td>{(totals.ts * 100).toFixed(2)}%</td>
+              <td>{totals.assists}</td>
+              <td>{totals.rebounds}</td>
+              <td>{totals.turnovers}</td>
+              <td>--</td>
+              <td>{totals.points}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul id="stats">
+          {_.pairs(this.state.stats).map(function(stat) {
+            return (<li>{stat[0]}:{stat[1]}</li>)
           })}
-          <tr id="last_box">
-            <td>Totals:</td>
-            <td>{totals.fgm}-{totals.fga}</td>
-            <td>{totals.threepm}-{totals.threepa}</td>
-            <td>{totals.ftm}-{totals.fta}</td>
-            <td>{(totals.efg * 100).toFixed(2)}%</td>
-            <td>{(totals.ts * 100).toFixed(2)}%</td>
-            <td>{totals.assists}</td>
-            <td>{totals.turnovers}</td>
-            <td>{totals.points}</td>
-          </tr>
-        </tbody>
-      </table>
+        </ul>
+      </div>
     );
   }
 });

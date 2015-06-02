@@ -3,7 +3,9 @@ import db from './db';
 import PlayerActions from '../actions/PlayerActions';
 import PossessionActions from '../actions/PossessionActions';
 import PlayerStore from './PlayerStore';
+import Utils from '../logic.js';
 var _ = require("lodash");
+var moment = require("moment");
 
 class PossessionStore {
   constructor() {
@@ -26,8 +28,12 @@ class PossessionStore {
     var _this = this;
     db.findOne({game_id: game_id, type: 'possession', number: existing_possessions}, function(err, doc) {
       var lineup = ["", "", "", "", ""];
+      var possession_type = "";
+      var start_time = null;
       if(doc !== null) {
         lineup = doc.lineup;
+        possession_type = Utils.nextPossessionType(doc);
+        start_time = doc.end_time
       }
       var new_possession = {
         type: 'possession',
@@ -37,7 +43,10 @@ class PossessionStore {
         ftm: 0,
         fta: 0,
         shot_by: "",
-        assist: ""
+        assist: "",
+        possession_type: possession_type,
+        rebound_type: "",
+        start_time: start_time
       };
       db.insert(new_possession, function(err, new_doc) {
         _this.updatePossessionsForGame(game_id);
@@ -80,32 +89,53 @@ class PossessionStore {
         ftm: 0,
         assists: 0,
         turnovers: 0,
-        points: 0
+        points: 0,
+        rebounds: 0,
+        plus_minus: 0,
+        minutes: 0
       };
       result.map(function(possession) {
         return _.extend(possession, box_score_info);
       });
       result = _.indexBy(result, '_id');
       docs.forEach(function(possession) {
-        if(possession.turnover) {
-          var playerCausingTurnover = possession.shot_by;
-          result[playerCausingTurnover]["turnovers"]++;
-        } else {
-          var playerShot = possession.shot_by;
-          result[playerShot]["fga"]++;
-          if(possession.shot_made) result[playerShot]["fgm"]++;
-          if(possession.shot_attempt_value === 3) result[playerShot]["threepa"]++;
-          if(possession.shot_made && possession.shot_attempt_value === 3) result[playerShot]["threepm"]++;
-          result[playerShot]["fta"] += Number(possession.fta);
-          if(possession.fta > 0 && !possession.shot_made) {
-            result[playerShot]["fga"]--;
-            if(possession.shot_attempt_value == 3) result[playerShot]["threepa"]--;
+        if(Utils.offensivePossession(possession)) {
+          if(possession.turnover) {
+            // Tabulate Turnovers
+            var playerCausingTurnover = possession.shot_by;
+            result[playerCausingTurnover]["turnovers"]++;
+          } else {
+            // Tabulate traditional box scores
+            var playerShot = possession.shot_by;
+            result[playerShot]["fga"]++;
+            if(possession.shot_made) result[playerShot]["fgm"]++;
+            if(possession.shot_attempt_value === 3) result[playerShot]["threepa"]++;
+            if(possession.shot_made && possession.shot_attempt_value === 3) result[playerShot]["threepm"]++;
+            result[playerShot]["fta"] += Number(possession.fta);
+            if(possession.fta > 0 && !possession.shot_made) {
+              result[playerShot]["fga"]--;
+              if(possession.shot_attempt_value == 3) result[playerShot]["threepa"]--;
+            }
+            result[playerShot]["ftm"] = Number(result[playerShot]["ftm"]) + Number(possession.ftm);
+            if(possession.assist !== "") result[possession.assist]["assists"]++;
           }
-          result[playerShot]["ftm"] = Number(result[playerShot]["ftm"]) + (Number(possession.ftm));
-          if(possession.assist !== "") result[possession.assist]["assists"]++;
-          }
-
         }
+
+        // Tabulate Rebounds
+        if(Utils.reboundByUs(possession)) {
+          if(possession.rebounder) result[possession.rebounder]["rebounds"]++;
+        }
+
+        // Tabulate +/- & minutes
+        var factor = Utils.offensivePossession(possession) ? 1 : -1;
+        var points_scored = Utils.points(possession);
+        var plus_minus = points_scored * factor;
+        var time_of_possession = Utils.timeOfPossession(possession);
+
+        possession.lineup.forEach(function(player_id) {
+          result[player_id]["plus_minus"] += plus_minus;
+          result[player_id]["minutes"] += time_of_possession;
+        });
       });
 
       result = _.values(result);
@@ -114,9 +144,33 @@ class PossessionStore {
         array[index].efg = (player.fgm + 0.5 * player.threepm) / player.fga;
         // for true shooting %, assume no and1s right now
         array[index].ts = (player.points) / (2 * (player.fga + 0.5 * player.fta));
+        array[index].minutes = moment().startOf('day').seconds(player.minutes).format('mm:ss');
       });
 
       callback(result);
+    });
+    return false;
+  }
+
+  static getStatistics(game_id, callback) {
+    db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
+      var stats = {};
+      stats.turnover_percentage = Utils.turnoverPercentage(docs);
+      stats.rebound_percentage = Utils.reboundPercentage(docs);
+      stats.defensive_rebounding_percentage = Utils.defensiveReboundingPercentage(docs);
+      stats.offensive_rebounding_percentage = Utils.offensiveReboundingPercentage(docs);
+      stats.opponent_points = Utils.opponentPoints(docs);
+      stats.opponent_points_off_turnovers = Utils.opponentPointsOffTurnovers(docs);
+      stats.opponent_second_chance_points = Utils.opponentSecondChancePoints(docs);
+      stats.our_second_chance_points = Utils.ourSecondChancePoints(docs);
+      callback(stats);
+    });
+    return false;
+  }
+
+  static getGraphPoints(game_id, callback) {
+    db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
+      callback(Utils.createGraphPoints(docs));
     });
     return false;
   }

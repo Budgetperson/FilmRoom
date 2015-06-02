@@ -4,6 +4,7 @@ import GameStore from '../stores/GameStore.js';
 import PossessionStore from '../stores/PossessionStore.js';
 import PossessionActions from '../actions/PossessionActions';
 import PlayerSelector from './PlayerSelector';
+import Utils from '../logic.js';
 
 let PossessionEditor = React.createClass({
 
@@ -17,8 +18,11 @@ let PossessionEditor = React.createClass({
   setEndTime() {
     var pos = this.props.possession;
     var current_time = window.player.getCurrentTime();
-    var update = { $set: { end_time: current_time } };
+    var playlist_index = window.player.getPlaylistIndex();
+
+    var update = { $set: { end_time: current_time, playlist_index: playlist_index } };
     PossessionActions.updatePossession(pos, update);
+    window.player.pauseVideo();
   },
 
   lineupChange(position, player_id) {
@@ -89,12 +93,43 @@ let PossessionEditor = React.createClass({
     PossessionActions.updatePossession(pos, update);
   },
 
+  setPossessionType(event) {
+    var pos = this.props.possession;
+    var update = { $set: {
+      possession_type: event.target.value
+    }};
+    PossessionActions.updatePossession(pos, update);
+  },
+
+  setReboundType(event) {
+    var update = { $set: {
+      rebound_type: event.target.value
+    }};
+    PossessionActions.updatePossession(this.props.possession, update);
+  },
+
+  setRebounder(player_id) {
+    var pos = this.props.possession;
+    var update = { $set: {
+      rebounder: player_id
+    }};
+    PossessionActions.updatePossession(pos, update);
+  },
 
   render() {
     var pos = this.props.possession;
     var _this = this;
+    console.log(pos.rebounder);
+    var show_rebound = Utils.reboundOpportunityExists(pos);
+    var show_select_rebounder = Utils.reboundByUs(pos);
+    var offensive_possession = Utils.offensivePossession(pos);
     return (
       <div>
+        <ul id="possession_type">
+          <li><button onClick={_this.setPossessionType} value="offense" className={pos.possession_type == 'offense' ? 'pure-button pure-button-active' : 'pure-button' }>Offense</button></li>
+          <li><button onClick={_this.setPossessionType} value="defense" className={pos.possession_type == 'defense' ? 'pure-button pure-button-active' : 'pure-button' }>Defense</button></li>    
+        </ul>
+
         <section id="start_time">
           <button onClick={_this.setStartTime} className="pure-button button-add">Set Start Time</button>
           <span>{pos.start_time ? pos.start_time : "Not Set"}</span>
@@ -119,10 +154,24 @@ let PossessionEditor = React.createClass({
           <span>FTA:</span><input value={pos.fta} onChange={this.setFreeThrowsAttempted} type="number" name="fta" min="0" max="3" />
         </section>
 
+        {show_rebound ? 
+        <ul id="rebound">
+          <li><button onClick={this.setReboundType} value="oreb" className={pos.rebound_type == 'oreb' ? 'pure-button pure-button-active' : 'pure-button' }>Offensive Rebound</button></li>
+          <li><button onClick={this.setReboundType} value="dreb" className={pos.rebound_type == 'dreb' ? 'pure-button pure-button-active' : 'pure-button' }>Defensive Rebound</button></li>
+          <li><button onClick={this.setReboundType} value="" className={pos.rebound_type == '' ? 'pure-button pure-button-active' : 'pure-button' }>No Rebound</button></li>
+          { show_select_rebounder ? <li><PlayerSelector defaultText="Team Rebound" selected={pos.rebounder} onChange={_this.setRebounder} /></li> : null }
+        </ul>
+        : null }
+
+        {offensive_possession ? 
         <section id="player_credit">
-          <span>Shot By:</span><PlayerSelector selected={pos.shot_by} onChange={this.setShotBy} />
+          { (pos.result == 'turnover') ?
+          <div><span>Turnover By:</span><PlayerSelector selected={pos.shot_by} onChange={this.setShotBy} /></div> :
+          <div><span>Shot By:</span><PlayerSelector selected={pos.shot_by} onChange={this.setShotBy} /></div>
+          }
           <span>Assist By:</span><PlayerSelector selected={pos.assist} onChange={this.setAssist} />
         </section>
+        : null }
 
         <section id="end_time">
           <button onClick={_this.setEndTime} className="pure-button button-add">Set End Time</button>

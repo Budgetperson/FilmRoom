@@ -6,7 +6,7 @@ class PossessionActions {
   }
 
   updatePossession(possession, update) {
-    this.dispatch({possession, update})
+    this.dispatch({possession, update});
   }
 }
 

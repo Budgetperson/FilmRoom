@@ -20,7 +20,6 @@ let Games = React.createClass({
   },
 
   render() {
-    //console.log(this.state.players);
     return (
       <table className="pure-table">
         <thead>
@@ -28,6 +27,7 @@ let Games = React.createClass({
             <th>Opponent</th>
             <th>Final Score</th>
             <th>Box Score</th>
+            <th>Game Flow</th>
             <th>Edit Metadata</th>
           </tr>
         </thead>
@@ -38,6 +38,7 @@ let Games = React.createClass({
                 <td>{game.opponent}</td>
                 <td>{game.points_scored} - {game.opponent_points_scored}</td>
                 <td><Link to="box" params={{id: game._id}}>Box</Link></td>
+                <td><Link to="flow" params={{id: game._id}}>Game Flow</Link></td>
                 <td><Link to="game" params={{id: game._id}}>Edit</Link></td>
               </tr>
             )

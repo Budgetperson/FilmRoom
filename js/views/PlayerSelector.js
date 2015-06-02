@@ -6,6 +6,13 @@ let PlayerSelector = React.createClass({
     return PlayerStore.getState();
   },
 
+  getDefaultProps() {
+    return {
+      selected: "",
+      defaultText: "Player: "
+    };
+  },
+
   componentDidMount() {
     PlayerStore.listen(this.onChange);
   },
@@ -25,11 +32,10 @@ let PlayerSelector = React.createClass({
   },
 
   render() {
-    //console.log(this.state.players);
     var _this = this;
     return (
       <select value={_this.props.selected} onChange={this.playerChange}>
-          <option value="">Player:</option>
+          <option value="">{this.props.defaultText}</option>
           {this.state.players.map(function(player) {
             return (
               <option key={player._id} value={player._id}>

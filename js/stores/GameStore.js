@@ -1,6 +1,7 @@
 import alt from '../alt';
 import db from './db';
 import GameActions from '../actions/GameActions';
+import PossessionActions from '../actions/PossessionActions';
  
 class GameStore {
   constructor() {

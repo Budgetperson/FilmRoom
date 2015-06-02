@@ -42,6 +42,8 @@ let Game = React.createClass({
   },
 
   onChange(state) {
+    //console.log(state);
+    //console.log(this.props.params.id);
     var id = this.props.params.id;
     this.setState({game_info: state.games.find(game => game._id == id) }, function() {
       var current_possession_id = this.state.game_info.current_possession;
