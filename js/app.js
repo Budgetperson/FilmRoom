@@ -7,6 +7,8 @@ import GamesHandler from './views/Games.js';
 import GameView from './views/Game.js';
 import BoxScoreView from './views/BoxScore.js';
 import GameFlowView from './views/GameFlow.js';
+import LineupView from './views/Lineup.js';
+
 import alt from './alt.js';
 import db from './stores/db.js';
 
@@ -35,6 +37,7 @@ let routes = (
     <Route name="game" path="/game/:id" handler={GameView} />
     <Route name="box" path="/box/:id" handler={BoxScoreView} />
     <Route name="flow" path="/flow/:id" handler={GameFlowView} />
+    <Route name="lineups" path="/lineups" handler={LineupView} />
   </Route>
 );
 

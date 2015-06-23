@@ -6,6 +6,8 @@ import PossessionStore from '../stores/PossessionStore.js';
 import PossessionActions from '../actions/PossessionActions';
 import GameActions from '../actions/GameActions';
 import PossessionEditor from './PossessionEditor';
+import Utils from '../logic.js';
+
 
 let Game = React.createClass({
   getInitialState() {
@@ -80,6 +82,7 @@ let Game = React.createClass({
     const opts = {
       height: '390',
       width: '640',
+      //videoId: 'RsN2d33Do68',
       playerVars: {
         enablejsapi: 1,
         listType: 'playlist',
@@ -102,7 +105,7 @@ let Game = React.createClass({
           <h3>Possessions</h3>
           <ul id="possession_list">
             {this.state.possessions.map(function(pos) {
-              return (<li onClick={_this.setCurrentPossession.bind(_this, pos._id)} key={pos._id}>Possession {pos.number}: {pos.start_time ? (+pos.start_time).toFixed(1) : ''}, {pos.result ? pos.result : ''}</li>)
+              return (<li onClick={_this.setCurrentPossession.bind(_this, pos._id)} key={pos._id}><strong>{pos.possession_type.charAt(0)}</strong> Possession {pos.number}: {pos.start_time.toFixed(1)}, {pos.result ? pos.result : ''}, ftm: {pos.ftm}</li>)
             })}
             <li><button onClick={_this.addPossession} className="pure-button button-add">Add Possession</button></li>
           </ul>

@@ -13,14 +13,13 @@ class PlayerStore {
       if (docs.length === 0) {
         db.insert([ {type: 'player', name: 'Yash Aggarwal'},
                     {type: 'player', name: 'Quinn McNamara'},
-                    {type: 'player', name: 'Jonathan Ibers'},
-                    {type: 'player', name: 'Sajid Leelani'},
-                    {type: 'player', name: 'Siddharth Kumar'},
-                    {type: 'player', name: 'Brian Hoang'},
-                    {type: 'player', name: 'Tariq Zahroof'},
-                    {type: 'player', name: 'Nimish Kumar'},
-                    {type: 'player', name: 'Nishan Gajjar'},
-                    {type: 'player', name: 'Darshil Choksi'}], function(err, newDocs) {
+                    {type: 'player', name: 'Eamon Dowd'},
+                    {type: 'player', name: 'Akshay Daga'},
+                    {type: 'player', name: 'Tej Singh'},
+                    {type: 'player', name: 'Nicolas Lavigne'},
+                    {type: 'player', name: 'Sam Allen'},
+                    {type: 'player', name: 'Subbu Kumar'},
+                    {type: 'player', name: 'Sajid Leelani'}], function(err, newDocs) {
           _this.players = newDocs;
           _this.emitChange();
         });
@@ -32,7 +31,6 @@ class PlayerStore {
   }
 
   deletePlayer(id) {
-    //console.log("here");
     var _this = this;
     db.remove({ _id: id }, {}, function(err, numRemoved) {
       _this.updatePlayers();
@@ -48,6 +46,7 @@ class PlayerStore {
     });
     return false;
   }
+
 }
  
 export default alt.createStore(PlayerStore, 'PlayerStore');

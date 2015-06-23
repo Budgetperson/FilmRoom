@@ -21,6 +21,11 @@ let BoxScore = React.createClass({
         stats: stats
       });
     });
+    PossessionStore.getOpponentStatistics(this.props.params.id, function(stats) {
+      _this.setState({
+        opponent_stats: stats
+      });
+    });
   },
 
   onChange() {
@@ -33,6 +38,11 @@ let BoxScore = React.createClass({
     PossessionStore.getStatistics(this.props.params.id, function(stats) {
       _this.setState({
         stats: stats
+      });
+    });
+    PossessionStore.getOpponentStatistics(this.props.params.id, function(stats) {
+      _this.setState({
+        opponent_stats: stats
       });
     });
   },
@@ -67,6 +77,7 @@ let BoxScore = React.createClass({
 
     return (
       <div>
+        <h2>Box Score</h2>
         <table id="box" className="pure-table">
           <thead>
             <tr>
@@ -119,6 +130,34 @@ let BoxScore = React.createClass({
             </tr>
           </tbody>
         </table>
+        <h2>Opponent Stats</h2>
+        {this.state.opponent_stats ?
+        <table className="pure-table">
+          <thead>
+            <tr>
+              <th>FG</th>
+              <th>3PT</th>
+              <th>FT</th>
+              <th>TS%</th>
+              <th>REB</th>
+              <th>TO</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{this.state.opponent_stats.fgm}-{this.state.opponent_stats.fga}</td>
+              <td>{this.state.opponent_stats.threepm}-{this.state.opponent_stats.threepa}</td>
+              <td>{this.state.opponent_stats.ftm}-{this.state.opponent_stats.fta}</td>
+              <td>{(this.state.opponent_stats.ts * 100).toFixed(2)}%</td>
+              <td>{this.state.opponent_stats.rebounds}</td>
+              <td>{this.state.opponent_stats.turnovers}</td>
+              <td>{this.state.opponent_stats.points}</td>
+            </tr>
+          </tbody>
+        </table>
+        : null }
+        <h2>Other Stats</h2>
         <ul id="stats">
           {_.pairs(this.state.stats).map(function(stat) {
             return (<li>{stat[0]}:{stat[1]}</li>)

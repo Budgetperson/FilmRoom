@@ -33,7 +33,7 @@ class PossessionStore {
       if(doc !== null) {
         lineup = doc.lineup;
         possession_type = Utils.nextPossessionType(doc);
-        start_time = doc.end_time
+        start_time = doc.end_time;
       }
       var new_possession = {
         type: 'possession',
@@ -163,7 +163,18 @@ class PossessionStore {
       stats.opponent_points_off_turnovers = Utils.opponentPointsOffTurnovers(docs);
       stats.opponent_second_chance_points = Utils.opponentSecondChancePoints(docs);
       stats.our_second_chance_points = Utils.ourSecondChancePoints(docs);
+      stats.our_squashed_possessions = Utils.numberOfSquashedPosessions(docs, true);
+      stats.our_squashed_ppp = Utils.squashedPointsPerPossession(docs, true).toFixed(3);
+      stats.opponent_squashed_possessions = Utils.numberOfSquashedPosessions(docs, false);
+      stats.opponent_squashed_ppp = Utils.squashedPointsPerPossession(docs, false).toFixed(3);
       callback(stats);
+    });
+    return false;
+  }
+
+  static getOpponentStatistics(game_id, callback) {
+    db.find({type: 'possession', game_id: game_id}).sort({number: 1}).exec(function(err, docs) {
+      callback(Utils.opponentStats(docs));
     });
     return false;
   }
@@ -173,6 +184,18 @@ class PossessionStore {
       callback(Utils.createGraphPoints(docs));
     });
     return false;
+  }
+
+  static getLineupData(callback) {
+    db.find({type: 'possession'}).exec((err, docs) => {
+      callback(Utils.lineupData(docs));
+    });
+  }
+
+  static getOnOffData(player_id, callback) {
+    db.find({type: 'possession'}).exec((err, docs) => {
+      callback(Utils.onOffStats(player_id, docs));
+    });
   }
 
 }

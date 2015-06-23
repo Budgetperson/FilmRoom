@@ -11,8 +11,8 @@ let GameFlow = React.createClass({
   componentDidMount() {
     var _this = this;
 
-    PossessionStore.getGraphPoints(this.props.params.id, function(data) {
-      _this.setState({ points: data }, function() {
+    PossessionStore.getGraphPoints(this.props.params.id, (data) => {
+      this.setState({ points: data }, function() {
         google.load('visualization', '1', {packages: ['corechart', 'line'], callback:
           function() {
             _this.drawChart();
@@ -36,9 +36,6 @@ let GameFlow = React.createClass({
         vAxis: {
           title: 'Points'
         },
-        // series: {
-        //   1: {curveType: 'function'}
-        // }
       };
 
       var chart = new google.visualization.LineChart(document.getElementById('graph'));

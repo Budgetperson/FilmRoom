@@ -119,7 +119,6 @@ let PossessionEditor = React.createClass({
   render() {
     var pos = this.props.possession;
     var _this = this;
-    console.log(pos.rebounder);
     var show_rebound = Utils.reboundOpportunityExists(pos);
     var show_select_rebounder = Utils.reboundByUs(pos);
     var offensive_possession = Utils.offensivePossession(pos);
